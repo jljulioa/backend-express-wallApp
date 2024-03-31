@@ -10,7 +10,11 @@ const wallSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
         required: true
-    } 
+    },
+    aspecRatio: {
+        type: Number,
+        required: true
+    }
  },
  {timestamps: true}
 )

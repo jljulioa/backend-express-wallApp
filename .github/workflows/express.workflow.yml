@@ -1,0 +1,40 @@
+name: CI/CD for Express App
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  AWS-REGION: us-east-1
+  EKS-CLUSTER-NAME: eksdemo1
+  REPOSITORY_URI: ${{secrets.REPOSITORY_URI}}
+  IMAGE_TAG: 1.0.${{ github.run_number }}
+
+permissions:
+  id-token: write
+  contents: read
+
+
+jobs:
+  push-image-ecr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS EKS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS-REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        run: |
+          aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.REPOSITORY_URI }}
+
+      - name: Build, tag, and push image to Amazon ECR
+        run: |
+          docker build -t $REPOSITORY_URI:express-app-$IMAGE_TAG .
+          docker push $REPOSITORY_URI:express-app-$IMAGE_TAG

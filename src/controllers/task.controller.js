@@ -6,6 +6,7 @@ import {uploadProfilePic} from "../libs/profile.pic.js"
 import {signedUrl} from "../libs/wall.signer.js"
 import {profileSignedUrl} from "../libs/profile.signer.js"
 import {deleteS3} from "../libs/wall.delete.js"
+import sharp from "sharp"
 
 
 const uniqueFilename = () => {
@@ -22,12 +23,14 @@ export const uploadProfileTask =  async (req, res) => {
     }
 
     const file = req.file
+    
     const userId = req.user.id
 
     const filename = `profile-${userId.slice(0, 6)}-${uuidv4().substring(0, 6)}.${file.mimetype.split("/")[1]}`
 
     try {
         const urlprofile = await uploadProfilePic(filename, file, file.mimetype, userId)
+        console.log(urlprofile)
         const sigedProfilePic = await profileSignedUrl(urlprofile)
         console.log(sigedProfilePic)
         const profilePic100 = sigedProfilePic[0]
@@ -56,9 +59,10 @@ export const getUserWallTask = async (req, res) => {
     console.log(req.user.id)
 
     try {
-        const result = await wallModel.find({user_id: req.user.id}, {key: 1, _id: 0})
+        const result = await wallModel.find({user_id: req.user.id}, {key: 1, aspecRatio: 1, _id: 0})
         const wallKeys = result.map(item => item.key)
-        const urls = await signedUrl(wallKeys)
+        const ar = result.map(item => item.aspecRatio)
+        const urls = await signedUrl(wallKeys, ar)
 
         res.json(urls)
     } catch (error) {
@@ -69,16 +73,21 @@ export const getUserWallTask = async (req, res) => {
 export const uploadTask = async (req, res) => { 
 
     if (!req.file) {
-        return res.status(400).json({ message: "No file uploaded" });
+        return res.status(400).json({ message: "No file uploaded, image type not allowed(jpg, jpeg, png)" });
     }
 
     const file = req.file
+    const image = sharp(file.buffer);
+    const metadata = await image.metadata();
+    const aspectRatio = (metadata.width / metadata.height).toFixed(2);
+    console.log(aspectRatio)
 
     const filename = uniqueFilename() + `.${file.mimetype.split("/")[1]}`
 
     const wall = new wallModel({
         key: filename,
-        user_id: req.user.id
+        user_id: req.user.id,
+        aspecRatio: aspectRatio
     })
 
     try {
@@ -90,6 +99,7 @@ export const uploadTask = async (req, res) => {
         res.status(500).json({message: error.message})
     }
 }
+
 export const deleteTask = async (req, res) => { 
     console.log(req.query.key)
 
