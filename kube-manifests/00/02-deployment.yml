@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: express-backend-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: express-backend
+  template:
+    metadata:
+      labels:
+        app: express-backend
+    spec:
+      serviceAccountName: express-app
+      volumes:
+      - name: express-secrets
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: aws-secrets
+      containers:
+      - name: express-backend
+        image: 125137910162.dkr.ecr.us-east-1.amazonaws.com/express-app:express-app-1.0.1
+        volumeMounts:
+        - name: express-secrets
+          mountPath: /mnt/secrets-store
+        env:
+        - name: PORT
+          value: "8080"
+        - name: MONGO_DB
+          valueFrom:
+            secretKeyRef:
+              name: db-creds
+              key: MONGO_DB
+        - name: SECRET_JWT
+          valueFrom:
+            secretKeyRef:
+              name: db-creds
+              key: SECRET_JWT
+        - name: AWS_REGION
+          valueFrom:
+            secretKeyRef:
+              name: db-creds
+              key: AWS_REGION
+        - name: AWS_CFD_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: db-creds
+              key: AWS_CFD_KEY_ID
+        - name: AWS_CFD_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: db-creds
+              key: AWS_CFD_PRIVATE_KEY
+        - name: AWS_CFD_DOMAIN
+          valueFrom:
+            secretKeyRef:
+              name: db-creds
+              key: AWS_CFD_DOMAIN
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: db-creds
+              key: AWS_ACCESS_KEY_ID
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: db-creds
+              key: AWS_SECRET_ACCESS_KEY
+        - name: AWS_BUCKET_NAME
+          valueFrom:
+            secretKeyRef:
+              name: db-creds
+              key: AWS_BUCKET_NAME
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: express-backend-service
+  labels:
+    app: express-backend
+    tier: backend
+spec:
+  type: ClusterIP
+  selector:
+    app: express-backend
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
