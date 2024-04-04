@@ -9,7 +9,7 @@ import cors from 'cors'
 const app = express()
 
 app.use(cors({
-    origin: 'http://54.166.67.12:31444',
+    origin: '*',
     credentials: true
 }))
 app.use(morgan('dev'));
