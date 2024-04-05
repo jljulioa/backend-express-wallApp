@@ -22,7 +22,7 @@ spec:
             secretProviderClass: aws-secrets
       containers:
       - name: express-backend
-        image: 125137910162.dkr.ecr.us-east-1.amazonaws.com/express-app:express-app-1.0.5
+        image: 125137910162.dkr.ecr.us-east-1.amazonaws.com/express-app:express-app-1.0.6
         volumeMounts:
         - name: express-secrets
           mountPath: /mnt/secrets-store
@@ -76,6 +76,7 @@ spec:
               key: AWS_BUCKET_NAME
         ports:
         - containerPort: 8080
+          name: express-backend
         resources:
           limits:
             memory: "128Mi"
@@ -94,6 +95,4 @@ spec:
   selector:
     app: express-backend
   ports:
-  - name: http
-    port: 8080
-    targetPort: 8080
+    - port: 8080

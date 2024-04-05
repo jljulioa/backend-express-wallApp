@@ -2,7 +2,7 @@ import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
 import { cfdDomain, cdfKeyId, cdfPrivateKey } from "../config.js";
 
 
-const dateLessThan = "2024-04-01"; // any Date constructor compatible
+const dateLessThan = "2024-07-01"; // any Date constructor compatible
 const DATE_END_SIGNED_URL = '1713200400000';
 const date = new Date();
 
