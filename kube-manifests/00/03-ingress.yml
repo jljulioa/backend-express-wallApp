@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: express-backend-ingress
+  labels:
+    app: express-backend
+  annotations:
+    alb.ingress.kubernetes.io/load-balancer-name: express-backend-balancer
+    alb.ingress.kubernetes.io/scheme: internet-facing
+spec:
+  ingressClassName: alb
+  defaultBackend:
+    service:
+      name: express-backend-service
+      port:
+        number: 8080
