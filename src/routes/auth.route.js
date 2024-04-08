@@ -11,5 +11,8 @@ router.post('/login', validatorSchema(loginSchema), loging);
 router.post('/logout', logout);
 router.get('/profile', authRequired, profile);
 router.get('/verify', VerifyToken)
+router.get('/', (req, res) => {
+    res.send("Hello from express server")
+})
 
 export default router

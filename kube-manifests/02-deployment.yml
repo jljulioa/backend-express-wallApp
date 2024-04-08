@@ -22,7 +22,7 @@ spec:
             secretProviderClass: aws-secrets
       containers:
       - name: express-backend
-        image: 125137910162.dkr.ecr.us-east-1.amazonaws.com/express-app:express-app-1.0.6
+        image: 125137910162.dkr.ecr.us-east-1.amazonaws.com/express-app:express-app-1.0.9
         volumeMounts:
         - name: express-secrets
           mountPath: /mnt/secrets-store
@@ -92,7 +92,9 @@ metadata:
     app: express-backend
     tier: backend
 spec:
+  type: ClusterIP
   selector:
     app: express-backend
   ports:
-    - port: 8080
+    - port: 80
+      targetPort: 8080
