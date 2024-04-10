@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: express-backend-deployment
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: express-backend
@@ -22,7 +22,7 @@ spec:
             secretProviderClass: aws-secrets
       containers:
       - name: express-backend
-        image: 125137910162.dkr.ecr.us-east-1.amazonaws.com/express-app:express-app-1.0.9
+        image: 125137910162.dkr.ecr.us-east-1.amazonaws.com/express-app:express-app-1.0.10
         volumeMounts:
         - name: express-secrets
           mountPath: /mnt/secrets-store
@@ -92,7 +92,7 @@ metadata:
     app: express-backend
     tier: backend
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: express-backend
   ports:
