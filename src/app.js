@@ -5,18 +5,26 @@ import cookieparser from 'cookie-parser'
 import taskRouter from './routes/task.route.js'
 import cors from 'cors'
 
-const allowedOrigins = [
-    '54.211.21.161',
-    '54.243.21.80',
+const whitelist = [
+    '54.204.67.62',
+    '54.234.165.228',
   ];
 
+const corsOptions = {
+    origin: function (origin, callback) {
+      if (whitelist.indexOf(origin) !== -1 || !origin) {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+      }
+    },
+    credentials: true
+  }
 
 const app = express()
 
-app.use(cors({
-    origin: allowedOrigins,
-    credentials: true
-}))
+app.options('*', cors(corsOptions))
+app.use(cors(corsOptions))
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieparser());
