@@ -22,13 +22,13 @@ spec:
             secretProviderClass: aws-secrets
       containers:
       - name: express-backend
-        image: 125137910162.dkr.ecr.us-east-1.amazonaws.com/express-app:express-app-1.0.12
+        image: 125137910162.dkr.ecr.us-east-1.amazonaws.com/express-app:express-app-1.0.13
         volumeMounts:
         - name: express-secrets
           mountPath: /mnt/secrets-store
         env:
         - name: PORT
-          value: "3030"
+          value: "80"
         - name: MONGO_DB
           valueFrom:
             secretKeyRef:
@@ -75,7 +75,7 @@ spec:
               name: db-creds
               key: AWS_BUCKET_NAME
         ports:
-        - containerPort: 3030
+        - containerPort: 80
           name: express-backend
         resources:
           limits:
@@ -92,9 +92,10 @@ metadata:
     app: express-backend
     tier: backend
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: express-backend
   ports:
     - port: 80
-      targetPort: 3030
+      targetPort: 80
+

@@ -5,12 +5,13 @@ metadata:
   labels:
     app: express-backend
   annotations:
-    alb.ingress.kubernetes.io/load-balancer-name: express-backend-balancer
-    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/load-balancer-name: express-alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
 spec:
   ingressClassName: alb
   defaultBackend:
     service:
       name: express-backend-service
       port:
-        number: 8080
+        number: 80

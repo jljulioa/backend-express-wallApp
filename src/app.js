@@ -6,8 +6,8 @@ import taskRouter from './routes/task.route.js'
 import cors from 'cors'
 
 const whitelist = [
-    '54.204.67.62',
-    '54.234.165.228',
+    'http://54.204.67.62:31444',
+    'http://54.234.165.228:31444',
   ];
 
 const corsOptions = {
