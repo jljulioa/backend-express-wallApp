@@ -9,4 +9,6 @@ export const bucketName = process.env.AWS_BUCKET_NAME
 export const cfdDomain = process.env.AWS_CFD_DOMAIN
 export const cdfKeyId = process.env.AWS_CFD_KEY_ID 
 export const cdfPrivateKey = process.env.AWS_CFD_PRIVATE_KEY
+export const whiteList = process.env.WHITELIST
+
 
