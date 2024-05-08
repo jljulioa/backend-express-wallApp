@@ -22,13 +22,15 @@ spec:
             secretProviderClass: aws-secrets
       containers:
       - name: express-backend
-        image: 125137910162.dkr.ecr.us-east-1.amazonaws.com/express-app:express-app-1.0.14
+        image: 125137910162.dkr.ecr.us-east-1.amazonaws.com/express-app:express-app-1.0.15
         volumeMounts:
         - name: express-secrets
           mountPath: /mnt/secrets-store
         env:
         - name: PORT
           value: "80"
+        - name: WHITELIST
+          value: 'http://54.204.67.62:31444, http://54.234.165.228:31444, http://localhost:5173'
         - name: MONGO_DB
           valueFrom:
             secretKeyRef:
